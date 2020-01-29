@@ -9,10 +9,12 @@ export default class Mastermind extends Component {
       guess: 0,
       counter: 0,
       number: 0,
-      numberHT: {}
+      numberHT: {},
+      invalid: false
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.inputRef = React.createRef()
   }
 
   async componentDidMount() {
@@ -37,14 +39,35 @@ export default class Mastermind extends Component {
 
   handleSubmit(event) {
     event.preventDefault()
+
+    if(this.state.guess === 0 || (this.state.guess/1000)<1) {
+      this.setState({invalid: true})
+      setTimeout(() => {
+        this.setState({invalid: false})}, 1000
+      )
+      return
+    }
+    //increment the counter
     let newCounter = this.state.counter
     newCounter++
+    //make the guess
+    let guess = this.createGuessObject()
+
+    //put counter and guess on state, then reset the guess
+    this.setState({
+      guesses: [...this.state.guesses, guess],
+      counter: newCounter,
+      guess: 0,
+    }, ()=>{console.log("number type", this.state.counter)})
+    this.inputRef.current.value = null
+  }
+
+  createGuessObject(){
     let guessObject = {}
     let comment;
     if (this.state.number == this.state.guess) {
       comment = "You got it right!"
     }
-
     else {
       let guess = String(this.state.guess)
       let number = String(this.state.number)
@@ -55,21 +78,15 @@ export default class Mastermind extends Component {
       }
       for (let i=0; i<guess.length; i++) {
           if (guess[i] === number[i]) {
-            comment = "at least one number at location is correct"
+            comment = "at least one number is in the proper location"
           }
       }
       if (comment === undefined) {
         comment = ""
       }
     }
-
     guessObject[this.state.guess] = comment
-
-    this.setState({
-      guesses: [...this.state.guesses, guessObject],
-      counter: newCounter
-    }, ()=>{console.log("number type", this.state.counter)})
-
+    return guessObject
   }
 
   render() {
@@ -87,13 +104,16 @@ export default class Mastermind extends Component {
 
 
         <form>
-        {this.state.invalid ? <div>You have guessed this guess before...</div>: null}
+        {this.state.invalid === true ? <div>Please make a new guess with four digits</div>: null}
+          <br></br>
+          <br></br>
+          <br></br>
 
           <div class="col-25">
           <label htmlFor="type">Guess:</label>
           </div>
           <div class="col-75">
-          <input type ="text" name="guess" onChange={this.handleChange}/>
+          <input type ="text" name="guess" onChange={this.handleChange} ref={this.inputRef}/>
           </div>
 
           <button type="button" onClick={this.handleSubmit}>
