@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import ReactDOM from 'react-dom'
 import axios from 'axios'
 
 export default class Mastermind extends Component {
@@ -7,16 +8,19 @@ export default class Mastermind extends Component {
     this.state = {
       guesses: [],
       guess: 0,
-      counter: 0,
+      counter: 3,
       number: 0,
       numberHT: {},
       invalid: false,
-      lose: null
+      lose: null,
+      open: false
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.inputRef = React.createRef()
     this.isGameOver = this.isGameOver.bind(this)
+    this.onOpen = this.onOpen.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   async componentDidMount() {
@@ -51,7 +55,7 @@ export default class Mastermind extends Component {
     }
     //increment the counter
     let newCounter = this.state.counter
-    newCounter++
+    newCounter--
     //make the guess
     let guess = this.createGuessObject()
 
@@ -65,6 +69,10 @@ export default class Mastermind extends Component {
     console.log("before function call", this.state.lose)
     this.isGameOver(guess)
     console.log("after", this.state.lose)
+    if (this.state.lose === true || this.state.lose === false) {
+      this.onOpen()
+      console.log("hi")
+    }
   }
 
   createGuessObject(){
@@ -96,7 +104,7 @@ export default class Mastermind extends Component {
 
   isGameOver(guess) {
     console.log("in isgameover", Object.values(guess)[0])
-    if (this.state.counter === 5 && Object.values(guess)[0] !== "You got it right!") {
+    if (this.state.counter === 0 && Object.values(guess)[0] !== "You got it right!") {
       this.setState({
         lose: true
       })
@@ -106,13 +114,32 @@ export default class Mastermind extends Component {
         lose: false
       })
     }
+  }
 
+  onOpen() {
+    this.setState({
+      open: true
+    })
+  }
+
+  onClose() {
+    this.setState({
+        guesses: [],
+        guess: 0,
+        counter: 3,
+        number: 0,
+        numberHT: {},
+        invalid: false,
+        lose: null,
+        open: false
+    })
   }
 
   render() {
     return(
       <div>
         <div>{this.state.number}</div>
+        <div>{this.state.counter} guesses remaining</div>
         <div>{this.state.guesses.map(guess => {
           return (
             <div className="container">
@@ -134,8 +161,52 @@ export default class Mastermind extends Component {
           Submit Guess
           </button>
         </form>
-
+        <Modal
+          open={this.state.open}
+          onClose={this.onClose}
+          status={this.state.lose}
+        ></Modal>
       </div>
     )
   }
 }
+
+let node = null
+
+class Modal extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+
+  static getDerivedStateFromProps(next) {
+    node && ReactDOM.render(<Popup {...next} />, node);
+    return next;
+  }
+
+  componentDidMount() {
+    node = document.createElement("div")
+    document.body.appendChild(node)
+    ReactDOM.render(<Popup {...this.props}/>, node)
+  }
+
+  render() {
+    return <p/>
+  }
+}
+
+function Popup({open, onClose, status}) {
+  let className = open ? "popup" : "clickedout"
+  if (status === false) {
+    status = "Win"
+  }
+  else {
+    status = "Lose"
+  }
+  return (
+    <div className={className} onClick={onClose}>
+    <div> The game is over! You {status}</div>
+    </div>
+  )
+}
+
