@@ -28,19 +28,18 @@ export default class Mastermind extends Component {
       number: +number,
       numberHT: ht
     })
-    console.log("hash", ht)
+    console.log("hash", ht) //ht is a string: number
   }
 
   handleChange(event) {
     this.setState({
-      guess: event.target.value
+      guess: event.target.value //guess is a number
     })
   }
 
   handleSubmit(event) {
     event.preventDefault()
-
-    if(this.state.guess === 0 || (this.state.guess/1000)<1) {
+    if (String(this.state.guess) === "0" || String(this.state.guess).length !== 4) {
       this.setState({invalid: true})
       setTimeout(() => {
         this.setState({invalid: false})}, 1000
@@ -63,26 +62,26 @@ export default class Mastermind extends Component {
   }
 
   createGuessObject(){
-    let guessObject = {}
+    let guessObject = {} //number:string
     let comment;
     if (this.state.number == this.state.guess) {
       comment = "You got it right!"
     }
     else {
       let guess = String(this.state.guess)
-      let number = String(this.state.number)
       for (let i=0; i<guess.length; i++) {
         if (guess[i] in this.state.numberHT) {
           comment = "at least one number is correct"
         }
       }
+      let number = String(this.state.number)
       for (let i=0; i<guess.length; i++) {
           if (guess[i] === number[i]) {
             comment = "at least one number is in the proper location"
           }
       }
       if (comment === undefined) {
-        comment = ""
+        comment = "No feedback"
       }
     }
     guessObject[this.state.guess] = comment
