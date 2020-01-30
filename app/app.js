@@ -115,28 +115,22 @@ export default class Mastermind extends Component {
         <div>{this.state.number}</div>
         <div>{this.state.guesses.map(guess => {
           return (
-            <div>
-            <div>{Object.keys(guess)}</div>
+            <div className="container">
+            <div>{Object.keys(guess)} ... </div>
+
             <div>{Object.values(guess)}</div>
             </div>
           )
         })}</div>
 
 
-        <form>
+        <form className="submit">
         {this.state.invalid === true ? <div>Please make a new guess with four digits</div>: null}
-          <br></br>
-          <br></br>
-          <br></br>
-
-          <div class="col-25">
-          <label htmlFor="type">Guess:</label>
-          </div>
-          <div class="col-75">
+          <div>
           <input type ="text" name="guess" onChange={this.handleChange} ref={this.inputRef}/>
           </div>
-
-          <button type="button" onClick={this.handleSubmit}>
+          <br></br>
+          <button className="custom-btn btn-1" type="button" onClick={this.handleSubmit}>
           Submit Guess
           </button>
         </form>

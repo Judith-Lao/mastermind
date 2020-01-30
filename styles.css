@@ -1,0 +1,33 @@
+.container {
+  border-radius: 5px;
+  width: 350px;
+  background-color: rgb(136, 184, 136);
+  padding: 13px;
+  display: flex;
+  flex-direction: row;
+}
+
+.submit {
+  position: absolute;
+  bottom: 100px;
+}
+
+.custom-btn {
+  padding: 10px 25px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  background: transparent;
+  outline: none !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+}
+
+.btn-1 {
+  border: 2px solid #000;
+}
+.btn-1:hover {
+  background: #000;
+  color: #fff;
+}
