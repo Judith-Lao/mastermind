@@ -10,11 +10,13 @@ export default class Mastermind extends Component {
       counter: 0,
       number: 0,
       numberHT: {},
-      invalid: false
+      invalid: false,
+      lose: null
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.inputRef = React.createRef()
+    this.isGameOver = this.isGameOver.bind(this)
   }
 
   async componentDidMount() {
@@ -29,6 +31,7 @@ export default class Mastermind extends Component {
       numberHT: ht
     })
     console.log("hash", ht) //ht is a string: number
+
   }
 
   handleChange(event) {
@@ -37,7 +40,7 @@ export default class Mastermind extends Component {
     })
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault()
     if (String(this.state.guess) === "0" || String(this.state.guess).length !== 4) {
       this.setState({invalid: true})
@@ -53,16 +56,19 @@ export default class Mastermind extends Component {
     let guess = this.createGuessObject()
 
     //put counter and guess on state, then reset the guess
-    this.setState({
+    await this.setState({
       guesses: [...this.state.guesses, guess],
       counter: newCounter,
       guess: 0,
     }, ()=>{console.log("number type", this.state.counter)})
     this.inputRef.current.value = null
+    console.log("before function call", this.state.lose)
+    this.isGameOver(guess)
+    console.log("after", this.state.lose)
   }
 
   createGuessObject(){
-    let guessObject = {} //number:string
+    let guessObject = {}
     let comment;
     if (this.state.number == this.state.guess) {
       comment = "You got it right!"
@@ -85,7 +91,22 @@ export default class Mastermind extends Component {
       }
     }
     guessObject[this.state.guess] = comment
-    return guessObject
+    return guessObject //number:string
+  }
+
+  isGameOver(guess) {
+    console.log("in isgameover", Object.values(guess)[0])
+    if (this.state.counter === 5 && Object.values(guess)[0] !== "You got it right!") {
+      this.setState({
+        lose: true
+      })
+    }
+    else if (Object.values(guess)[0] === "You got it right!") {
+      this.setState({
+        lose: false
+      })
+    }
+
   }
 
   render() {
@@ -118,13 +139,9 @@ export default class Mastermind extends Component {
           <button type="button" onClick={this.handleSubmit}>
           Submit Guess
           </button>
-
         </form>
-
 
       </div>
     )
-
   }
-
 }
