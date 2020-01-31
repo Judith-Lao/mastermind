@@ -8,7 +8,7 @@ export default class Mastermind extends Component {
     this.state = {
       guesses: [],
       guess: 0,
-      counter: 3,
+      counter: "Choose a level to find out",
       number: 0,
       numberHT: {},
       invalid: false,
@@ -19,8 +19,12 @@ export default class Mastermind extends Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.inputRef = React.createRef()
     this.isGameOver = this.isGameOver.bind(this)
-    this.onOpen = this.onOpen.bind(this);
-    this.onClose = this.onClose.bind(this);
+    this.onOpen = this.onOpen.bind(this)
+    this.onClose = this.onClose.bind(this)
+    this.hide = this.hide.bind(this)
+    this.clickEasy = this.clickEasy.bind(this)
+    this.clickMedium = this.clickMedium.bind(this)
+    this.clickHard = this.clickHard.bind(this)
   }
 
   async componentDidMount() {
@@ -34,13 +38,12 @@ export default class Mastermind extends Component {
       number: +number,
       numberHT: ht
     })
-    console.log("hash", ht) //ht is a string: number
 
   }
 
   handleChange(event) {
     this.setState({
-      guess: event.target.value //guess is a number
+      guess: event.target.value
     })
   }
 
@@ -66,12 +69,11 @@ export default class Mastermind extends Component {
       guess: 0,
     }, ()=>{console.log("number type", this.state.counter)})
     this.inputRef.current.value = null
-    console.log("before function call", this.state.lose)
+
+    //check if game is over
     this.isGameOver(guess)
-    console.log("after", this.state.lose)
     if (this.state.lose === true || this.state.lose === false) {
       this.onOpen()
-      console.log("hi")
     }
   }
 
@@ -99,7 +101,7 @@ export default class Mastermind extends Component {
       }
     }
     guessObject[this.state.guess] = comment
-    return guessObject //number:string
+    return guessObject
   }
 
   isGameOver(guess) {
@@ -121,12 +123,12 @@ export default class Mastermind extends Component {
       open: true
     })
   }
-
   onClose() {
+    this.hide()
     this.setState({
         guesses: [],
         guess: 0,
-        counter: 3,
+        counter: "Choose difficulty level to find out",
         number: 0,
         numberHT: {},
         invalid: false,
@@ -135,10 +137,49 @@ export default class Mastermind extends Component {
     })
   }
 
+  clickEasy() {
+    this.setState({
+      counter: 10
+    })
+    this.hide()
+  }
+  clickMedium() {
+    this.setState({
+      counter: 7
+    })
+    this.hide()
+  }
+  clickHard() {
+    this.setState({
+      counter: 3
+    })
+    this.hide()
+  }
+  hide() {
+    let grab = document.getElementById("hide")
+    if (grab.style.display === "none") {
+      grab.style.display = "block"
+    }
+    else {
+      grab.style.display = "none"
+    }
+  }
+
   render() {
     return(
       <div>
-        <div>{this.state.number}</div>
+        <div id="hide">
+          <button className="custom-btn btn-1" type="button" onClick={this.clickEasy}>
+          Easy
+          </button>
+          <button className="custom-btn btn-1" type="button" onClick={this.clickMedium}>
+          Medium
+          </button>
+          <button className="custom-btn btn-1" type="button" onClick={this.clickHard}>
+          Hard
+          </button>
+        </div>
+        <div >{this.state.number}</div>
         <div>{this.state.counter} guesses remaining</div>
         <div>{this.state.guesses.map(guess => {
           return (

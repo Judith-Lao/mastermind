@@ -34,7 +34,7 @@
 
 .modal {
   padding: 12px;
-  background: slateblue;
+
   width: 320px;
   text-align: center;
 }
@@ -52,4 +52,5 @@
 
 .popup {
   display: flex;
+  background: slateblue;
 }
