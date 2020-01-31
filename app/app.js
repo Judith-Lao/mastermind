@@ -105,7 +105,6 @@ export default class Mastermind extends Component {
   }
 
   isGameOver(guess) {
-    console.log("in isgameover", Object.values(guess)[0])
     if (this.state.counter === 0 && Object.values(guess)[0] !== "You got it right!") {
       this.setState({
         lose: true
@@ -179,7 +178,7 @@ export default class Mastermind extends Component {
           Hard
           </button>
         </div>
-        <div >{this.state.number}</div>
+        <div >{this.state.number} is the computer generated number</div>
         <div>{this.state.counter} guesses remaining</div>
         <div>{this.state.guesses.map(guess => {
           return (
