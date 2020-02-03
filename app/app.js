@@ -56,22 +56,26 @@ export default class Mastermind extends Component {
       )
       return
     }
-    //increment the counter
+    //decrement the counter
     let newCounter = this.state.counter
     newCounter--
     //make the guess
     let guess = this.createGuessObject()
 
-    //put counter and guess on state, then reset the guess
+    //put counter and guess on state
     await this.setState({
       guesses: [...this.state.guesses, guess],
       counter: newCounter,
       guess: 0,
     }, ()=>{console.log("number type", this.state.counter)})
+
+    //reset the form
     this.inputRef.current.value = null
 
     //check if game is over
     this.isGameOver(guess)
+
+    //if game is over, open the modal
     if (this.state.lose === true || this.state.lose === false) {
       this.onOpen()
     }
@@ -118,11 +122,13 @@ export default class Mastermind extends Component {
   }
 
   onOpen() {
+    //called in submitGuess
     this.setState({
       open: true
     })
   }
   onClose() {
+    //reset the state
     this.hide()
     this.setState({
         guesses: [],
