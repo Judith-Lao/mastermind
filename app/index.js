@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Mastermind from './app'
+import App from './app'
 
 ReactDOM.render(
-  <Mastermind />,
+  <App />,
   document.getElementById('app')
 )
