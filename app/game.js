@@ -2,33 +2,35 @@ import React, {Component} from 'react'
 import axios from 'axios'
 import Modal from './modal'
 
-export default class Mastermind extends Component {
+export default class Game extends Component {
   constructor(props) {
     super(props)
     this.state = {
       guesses: [],
       guess: 0,
-      counter: "Choose a level to find out",
+      counter: 10,
       number: 0,
       numberHT: {},
       invalid: false,
       lose: null,
       open: false
     }
+    this.getNewNumber = this.getNewNumber.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.inputRef = React.createRef()
     this.isGameOver = this.isGameOver.bind(this)
     this.onOpen = this.onOpen.bind(this)
     this.onClose = this.onClose.bind(this)
-    this.hide = this.hide.bind(this)
-    this.clickEasy = this.clickEasy.bind(this)
-    this.clickMedium = this.clickMedium.bind(this)
-    this.clickHard = this.clickHard.bind(this)
   }
 
-  async componentDidMount() {
-    let {data} = await axios.get("https://www.random.org/integers/?num=4&min=0&max=7&col=7&base=10&format=plain&rnd=new")
+  componentDidMount() {
+    this.getNewNumber()
+  }
+
+  async getNewNumber() {
+    const numberOfDigits = this.props.numberOfDigits
+    let {data} = await axios.get(`https://www.random.org/integers/?num=${numberOfDigits}&min=0&max=7&col=7&base=10&format=plain&rnd=new`)
     let number = data.replace(/\s/g,'')
     let ht = {}
     for (let i = 0; i<number.length; i++) {
@@ -38,7 +40,6 @@ export default class Mastermind extends Component {
       number: +number,
       numberHT: ht
     })
-
   }
 
   handleChange(event) {
@@ -49,7 +50,7 @@ export default class Mastermind extends Component {
 
   async handleSubmit(event) {
     event.preventDefault()
-    if (String(this.state.guess) === "0" || String(this.state.guess).length !== 4) {
+    if (String(this.state.guess).length !== this.props.numberOfDigits) {
       this.setState({invalid: true})
       setTimeout(() => {
         this.setState({invalid: false})}, 1000
@@ -129,11 +130,10 @@ export default class Mastermind extends Component {
   }
   onClose() {
     //reset the state
-    this.hide()
     this.setState({
         guesses: [],
         guess: 0,
-        counter: "Choose difficulty level to find out",
+        counter: 10,
         number: 0,
         numberHT: {},
         invalid: false,
@@ -142,48 +142,9 @@ export default class Mastermind extends Component {
     })
   }
 
-  clickEasy() {
-    this.setState({
-      counter: 10
-    })
-    this.hide()
-  }
-  clickMedium() {
-    this.setState({
-      counter: 7
-    })
-    this.hide()
-  }
-  clickHard() {
-    this.setState({
-      counter: 3
-    })
-    this.hide()
-  }
-  hide() {
-    let grab = document.getElementById("hide")
-    if (grab.style.display === "none") {
-      grab.style.display = "block"
-    }
-    else {
-      grab.style.display = "none"
-    }
-  }
-
   render() {
     return(
       <div>
-        <div id="hide">
-          <button className="custom-btn btn-1" type="button" onClick={this.clickEasy}>
-          Easy
-          </button>
-          <button className="custom-btn btn-1" type="button" onClick={this.clickMedium}>
-          Medium
-          </button>
-          <button className="custom-btn btn-1" type="button" onClick={this.clickHard}>
-          Hard
-          </button>
-        </div>
         <div >{this.state.number} is the computer generated number</div>
         <div>{this.state.counter} guesses remaining</div>
         <div>{this.state.guesses.map(guess => {
@@ -195,10 +156,8 @@ export default class Mastermind extends Component {
             </div>
           )
         })}</div>
-
-
         <form className="submit">
-        {this.state.invalid === true ? <div>Please make a new guess with four digits</div>: null}
+        {this.state.invalid === true ? <div>Please make a new guess with {this.props.numberOfDigits} digits</div>: null}
           <div>
           <input type ="text" name="guess" onChange={this.handleChange} ref={this.inputRef}/>
           </div>

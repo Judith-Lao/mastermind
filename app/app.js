@@ -6,22 +6,27 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      difficultyLevel: '',
+      numberOfDigits: 0,
       phase: 'instructions'
     }
+    this.incorporateUpdates = this.incorporateUpdates.bind(this)
   }
 
-  incorporateUpdates() {
+  async incorporateUpdates(numberOfDigits) {
+    //incorporating updates from instructions page
+    await this.setState({
+      numberOfDigits
+    })
     this.setState({
-
+      phase: "game"
     })
   }
 
   render() {
     return(
     <div>
-      {this.state.phase === "instructions" ?<Instructions></Instructions> : null}
-      {this.state.phase === "game" ?<Game></Game>: null}
+      {this.state.phase === "instructions" ?<Instructions incorporateUpdates={this.incorporateUpdates}></Instructions> : null}
+      {this.state.phase === "game" ?<Game numberOfDigits={this.state.numberOfDigits}></Game>: null}
     </div>
     )
   }

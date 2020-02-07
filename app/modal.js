@@ -11,6 +11,7 @@ export default class Modal extends Component {
 
   static getDerivedStateFromProps(next) {
     node && ReactDOM.render(<Popup {...next} />, node);
+    return next
   }
 
   componentDidMount() {
