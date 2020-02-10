@@ -4,7 +4,6 @@ export default class Instructions extends Component {
   constructor(props) {
     super(props)
     this.state = {}
-
   }
 
   chooseDifficulty(difficulty) {
@@ -14,7 +13,6 @@ export default class Instructions extends Component {
       "hard": 10
     }
     const numberOfDigits = difficulties[difficulty]
-
     this.props.incorporateUpdates(numberOfDigits)
   }
 
